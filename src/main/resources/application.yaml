@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: forum
+  datasource:
+    url: jdbc:postgresql://localhost:5432/forum
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    open-in-view: off
+    show-sql: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-description: "Existing schema (e.g. from Hibernate); adopt Flyway without re-applying V1."
+
+server:
+  port: 9000
+
+app:
+  jwt:
+    # HS256: use at least 32 bytes. Override via JWT_SECRET in production.
+    secret: ${JWT_SECRET:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
+    expiration-ms: 86400000
+
+# OpenAPI model from classpath (OpenApiFromSpecConfig); JSON at springdoc path below.
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: false
+
+scalar:
+  enabled: true
+  path: /scalar
+  url: /v3/api-docs

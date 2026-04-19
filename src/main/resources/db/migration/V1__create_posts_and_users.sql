@@ -1,0 +1,14 @@
+CREATE TABLE posts (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content VARCHAR(10000) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE users (
+    id BIGSERIAL PRIMARY KEY,
+    username VARCHAR(100) NOT NULL UNIQUE,
+    email VARCHAR(320) UNIQUE,
+    role VARCHAR(32) NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL
+);
