@@ -1,0 +1,10 @@
+spring:
+  config:
+    activate:
+      on-profile: uat
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    com.mse.edu.forum: INFO

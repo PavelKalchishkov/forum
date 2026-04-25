@@ -29,6 +29,8 @@ public class SecurityConfig {
 				.requestMatchers("/auth/login").permitAll()
 				.requestMatchers(HttpMethod.GET, "/posts", "/posts/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/replies", "/replies/**").permitAll()
+				.requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
+				.requestMatchers("/livez", "/readyz").permitAll()
 				.requestMatchers("/v3/api-docs/**", "/scalar/**", "/docs").permitAll()
 				.requestMatchers("/error").permitAll()
 				.anyRequest()

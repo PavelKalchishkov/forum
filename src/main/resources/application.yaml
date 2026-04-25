@@ -1,14 +1,16 @@
 spring:
   application:
     name: forum
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   datasource:
-    url: jdbc:postgresql://localhost:5432/forum
-    username: admin
-    password: admin
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     open-in-view: off
-    show-sql: false
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
     hibernate:
       ddl-auto: validate
   flyway:
@@ -18,12 +20,13 @@ spring:
 
 server:
   port: 9000
+  forward-headers-strategy: framework
 
 app:
   jwt:
-    # HS256: use at least 32 bytes. Override via JWT_SECRET in production.
-    secret: ${JWT_SECRET:0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef}
-    expiration-ms: 86400000
+    # HS256: use at least 32 bytes.
+    secret: ${JWT_SECRET}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
 
 # OpenAPI model from classpath (OpenApiFromSpecConfig); JSON at springdoc path below.
 springdoc:
@@ -37,3 +40,22 @@ scalar:
   enabled: true
   path: /scalar
   url: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+        add-additional-paths: true
+      show-details: never
+      group:
+        liveness:
+          include: livenessState,ping
+        readiness:
+          include: readinessState,db
+        startup:
+          include: readinessState,db
