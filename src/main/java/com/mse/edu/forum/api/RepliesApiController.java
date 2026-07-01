@@ -2,10 +2,11 @@ package com.mse.edu.forum.api;
 
 import com.mse.edu.forum.api.generated.RepliesApi;
 import com.mse.edu.forum.api.generated.model.CreateReplyRequest;
+import com.mse.edu.forum.api.generated.model.ReplyPageResponse;
 import com.mse.edu.forum.api.generated.model.ReplyResponse;
+import com.mse.edu.forum.api.generated.model.UpdateReplyRequest;
 import com.mse.edu.forum.service.ReplyService;
 import jakarta.validation.Valid;
-import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -25,9 +26,9 @@ public class RepliesApiController implements RepliesApi {
 	}
 
 	@Override
-	public ResponseEntity<List<ReplyResponse>> listRepliesForPost(Long postId) {
-		log.debug("listRepliesForPost postId={}", postId);
-		return ResponseEntity.ok(replyService.findByPostId(postId));
+	public ResponseEntity<ReplyPageResponse> listRepliesForPost(Long postId, Integer page, Integer size) {
+		log.debug("listRepliesForPost postId={} page={} size={}", postId, page, size);
+		return ResponseEntity.ok(replyService.findByPostId(postId, page, size));
 	}
 
 	@Override
@@ -45,5 +46,25 @@ public class RepliesApiController implements RepliesApi {
 		log.debug("createReply postId={}", postId);
 		ReplyResponse created = replyService.create(postId, createReplyRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
+	}
+
+	@Override
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<ReplyResponse> updateReply(Long id, @Valid UpdateReplyRequest updateReplyRequest) {
+		log.debug("updateReply id={}", id);
+		return replyService
+				.update(id, updateReplyRequest)
+				.map(ResponseEntity::ok)
+				.orElseGet(() -> ResponseEntity.notFound().build());
+	}
+
+	@Override
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<Void> deleteReply(Long id) {
+		log.debug("deleteReply id={}", id);
+		if (replyService.delete(id)) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.notFound().build();
 	}
 }

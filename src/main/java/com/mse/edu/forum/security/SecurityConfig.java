@@ -29,9 +29,11 @@ public class SecurityConfig {
 		http.formLogin(AbstractHttpConfigurer::disable);
 		http.httpBasic(AbstractHttpConfigurer::disable);
 		http.authorizeHttpRequests(auth -> auth
-				.requestMatchers("/auth/login").permitAll()
+				.requestMatchers("/", "/index.html", "/css/**", "/js/**", "/favicon.ico").permitAll()
+				.requestMatchers("/auth/login", "/auth/register").permitAll()
 				.requestMatchers(HttpMethod.GET, "/posts", "/posts/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/replies", "/replies/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/users/*").permitAll()
 				.requestMatchers("/actuator/health/**", "/actuator/info").permitAll()
 				.requestMatchers("/livez", "/readyz").permitAll()
 				.requestMatchers("/v3/api-docs/**", "/scalar/**", "/docs").permitAll()

@@ -1,9 +1,11 @@
 package com.mse.edu.forum.service;
 
 import com.mse.edu.forum.api.generated.model.CreateUserRequest;
+import com.mse.edu.forum.api.generated.model.RegisterRequest;
 import com.mse.edu.forum.api.generated.model.UpdateUserRequest;
 import com.mse.edu.forum.api.generated.model.UserResponse;
 import com.mse.edu.forum.domain.UserEntity;
+import com.mse.edu.forum.domain.UserRole;
 import com.mse.edu.forum.mapper.UserMapper;
 import com.mse.edu.forum.repo.UserRepository;
 import com.mse.edu.forum.security.ForumUserDetails;
@@ -41,14 +43,20 @@ public class UserService {
 	}
 
 	@Transactional
+	public UserResponse register(RegisterRequest request) {
+		UserEntity entity = new UserEntity();
+		entity.setUsername(userMapper.trimmed(request.getUsername()));
+		entity.setEmail(userMapper.normalizeEmail(request.getEmail()));
+		entity.setRole(UserRole.USER);
+		validateUniqueCredentials(entity);
+		entity.setPasswordHash(passwordEncoder.encode(request.getPassword()));
+		return userMapper.toResponse(userRepository.save(entity));
+	}
+
+	@Transactional
 	public UserResponse create(CreateUserRequest request) {
 		UserEntity entity = userMapper.toEntity(request);
-		if (userRepository.existsByUsername(entity.getUsername())) {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
-		}
-		if (entity.getEmail() != null && userRepository.existsByEmail(entity.getEmail())) {
-			throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use");
-		}
+		validateUniqueCredentials(entity);
 		entity.setPasswordHash(passwordEncoder.encode(request.getPassword()));
 		UserEntity saved = userRepository.save(entity);
 		return userMapper.toResponse(saved);
@@ -90,6 +98,15 @@ public class UserService {
 		}
 		userRepository.deleteById(id);
 		return true;
+	}
+
+	private void validateUniqueCredentials(UserEntity entity) {
+		if (userRepository.existsByUsername(entity.getUsername())) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "Username already taken");
+		}
+		if (entity.getEmail() != null && userRepository.existsByEmail(entity.getEmail())) {
+			throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use");
+		}
 	}
 
 	private static boolean isAdmin() {

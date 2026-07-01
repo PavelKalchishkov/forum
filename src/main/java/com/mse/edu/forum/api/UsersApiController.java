@@ -33,7 +33,6 @@ public class UsersApiController implements UsersApi {
 	}
 
 	@Override
-	@PreAuthorize("hasAnyRole('ADMIN','MODERATOR') or @userSecurity.isSelf(#id)")
 	public ResponseEntity<UserResponse> getUserById(Long id) {
 		log.debug("getUserById invoked id={}", id);
 		return userService

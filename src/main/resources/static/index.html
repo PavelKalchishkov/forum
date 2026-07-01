@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Forum</title>
+	<link rel="stylesheet" href="/css/forum.css">
+</head>
+<body>
+	<header class="site-header">
+		<div class="header-inner">
+			<a href="#/" class="logo">Forum</a>
+			<div class="header-actions" id="header-actions"></div>
+		</div>
+	</header>
+
+	<main class="container" id="app"></main>
+
+	<div class="modal-overlay hidden" id="auth-modal">
+		<div class="modal">
+			<h2 id="auth-modal-title">Вход</h2>
+			<div class="modal-tabs">
+				<button type="button" class="btn btn-ghost active" data-tab="login">Вход</button>
+				<button type="button" class="btn btn-ghost" data-tab="register">Регистрация</button>
+			</div>
+			<form id="login-form">
+				<div class="form-group">
+					<label for="login-username">Потребител</label>
+					<input id="login-username" name="username" required autocomplete="username">
+				</div>
+				<div class="form-group">
+					<label for="login-password">Парола</label>
+					<input id="login-password" name="password" type="password" required autocomplete="current-password">
+				</div>
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary">Влез</button>
+					<button type="button" class="btn btn-ghost" id="close-auth">Отказ</button>
+				</div>
+			</form>
+			<form id="register-form" class="hidden">
+				<div class="form-group">
+					<label for="reg-username">Потребител</label>
+					<input id="reg-username" name="username" required autocomplete="username">
+				</div>
+				<div class="form-group">
+					<label for="reg-email">Имейл (по избор)</label>
+					<input id="reg-email" name="email" type="email" autocomplete="email">
+				</div>
+				<div class="form-group">
+					<label for="reg-password">Парола (мин. 8 символа)</label>
+					<input id="reg-password" name="password" type="password" required minlength="8" autocomplete="new-password">
+				</div>
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary">Регистрирай се</button>
+					<button type="button" class="btn btn-ghost" id="close-auth-2">Отказ</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div class="modal-overlay hidden" id="topic-modal">
+		<div class="modal" style="max-width: 520px;">
+			<h2>Нова тема</h2>
+			<form id="new-topic-form">
+				<div class="form-group">
+					<label for="topic-title">Заглавие</label>
+					<input id="topic-title" name="title" required maxlength="500">
+				</div>
+				<div class="form-group">
+					<label for="topic-content">Съдържание</label>
+					<textarea id="topic-content" name="content" required maxlength="10000"></textarea>
+				</div>
+				<div class="form-actions">
+					<button type="submit" class="btn btn-primary">Публикувай</button>
+					<button type="button" class="btn btn-ghost" id="close-topic">Отказ</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<div class="toast hidden" id="toast"></div>
+
+	<script src="/js/forum.js"></script>
+</body>
+</html>

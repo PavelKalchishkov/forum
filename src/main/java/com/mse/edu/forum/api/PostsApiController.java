@@ -3,6 +3,7 @@ package com.mse.edu.forum.api;
 import com.mse.edu.forum.api.generated.PostsApi;
 import com.mse.edu.forum.api.generated.model.CreatePostRequest;
 import com.mse.edu.forum.api.generated.model.PostResponse;
+import com.mse.edu.forum.api.generated.model.UpdatePostRequest;
 import com.mse.edu.forum.service.PostService;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -31,10 +32,10 @@ public class PostsApiController implements PostsApi {
 	}
 
 	@Override
-	public ResponseEntity<PostResponse> getPostById(Long id) {
-		log.debug("getPostById invoked id={}", id);
+	public ResponseEntity<PostResponse> getPostById(Long id, Boolean trackView) {
+		log.debug("getPostById invoked id={} trackView={}", id, trackView);
 		return postService
-				.findById(id)
+				.findById(id, trackView)
 				.map(ResponseEntity::ok)
 				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
@@ -45,5 +46,25 @@ public class PostsApiController implements PostsApi {
 		log.debug("createPost invoked title={}", createPostRequest.getTitle());
 		PostResponse created = postService.create(createPostRequest);
 		return ResponseEntity.status(HttpStatus.CREATED).body(created);
+	}
+
+	@Override
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<PostResponse> updatePost(Long id, @Valid UpdatePostRequest updatePostRequest) {
+		log.debug("updatePost invoked id={}", id);
+		return postService
+				.update(id, updatePostRequest)
+				.map(ResponseEntity::ok)
+				.orElseGet(() -> ResponseEntity.notFound().build());
+	}
+
+	@Override
+	@PreAuthorize("isAuthenticated()")
+	public ResponseEntity<Void> deletePost(Long id) {
+		log.debug("deletePost invoked id={}", id);
+		if (postService.delete(id)) {
+			return ResponseEntity.noContent().build();
+		}
+		return ResponseEntity.notFound().build();
 	}
 }
